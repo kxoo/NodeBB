@@ -11,7 +11,7 @@ COPY --chown=node:node install/package.json /usr/src/build/package.json
 
 USER node
 
-RUN npm install --omit=dev
+RUN yarn --omit=dev
 
 FROM node:lts as rebuild
 
@@ -21,11 +21,11 @@ ARG TARGETPLATFORM
 RUN mkdir -p /usr/src/build && \
     chown -R node:node /usr/src/build
 
-COPY --from=npm /usr/src/build /usr/src/build
+COPY --from=yarn /usr/src/build /usr/src/build
 
 RUN if [ $BUILDPLATFORM != $TARGETPLATFORM ]; then \
-    npm rebuild && \
-    npm cache clean --force; fi
+    yarn rebuild && \
+    yarn cache clean --force; fi
 
 FROM node:lts-slim as run
 
